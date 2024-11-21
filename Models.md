@@ -2,8 +2,8 @@
 
 Bedste modeller (snakmodel ser umiddelbart bedst ud nu)
 
+- https://huggingface.co/NLPnorth/snakmodel-7b-base (modellen fylder ca. 12 GB i alt fordelt på 3 shards)
 - https://huggingface.co/LumiOpen/Viking-7B
-- https://huggingface.co/NLPnorth/snakmodel-7b-base
 - https://huggingface.co/KennethTM/gpt-neo-1.3B-danish
 Trænet på den danske del af OSCAR-datasættet (800 M danske tokens)
 Ikke trænet på dansk fra bunden, på en eller anden måde overført med danske embeddings fra en engelsk model
