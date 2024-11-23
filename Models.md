@@ -1,9 +1,9 @@
 # Legal Danish QA
 
-Bedste modeller (snakmodel ser umiddelbart bedst ud nu)
+Bedste modeller (dant5-large ser umiddelbart mest brugbar ud)
 
-- https://huggingface.co/NLPnorth/snakmodel-7b-base (modellen fylder ca. 12 GB i alt fordelt på 3 shards)
 - https://huggingface.co/strombergnlp/dant5-large
+- https://huggingface.co/NLPnorth/snakmodel-7b-base (modellen fylder ca. 12 GB i alt fordelt på 3 shards)
 - https://huggingface.co/KennethTM/gpt-neo-1.3B-danish
 Trænet på den danske del af OSCAR-datasættet (800 M danske tokens)
 Ikke trænet på dansk fra bunden, på en eller anden måde overført med danske embeddings fra en engelsk model
