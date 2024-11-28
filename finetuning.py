@@ -1,27 +1,24 @@
-from transformers import AutoTokenizer, T5ForConditionalGeneration, TrainingArguments
+from transformers import AutoTokenizer, T5ForConditionalGeneration, TrainingArguments, Trainer
+import torch
+from evaluate import load
 import random
 
-# save model name
+# Model and tokenizer setup
 model_name = "strombergnlp/dant5-large"
-
-# initiate tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
 
-# create tokenizer function
-def tokenize_function(examples):
-    return tokenizer(examples["text"], padding="max_length", truncation=True)
-
-# open list of text examples 
+# Load dataset
 with open("finetune_list.txt", "r") as file:
     dataset = [line.strip() for line in file]
 
-# create masking function
+# Masking function
 def mask_text(text, mask_probability=0.15):
     tokens = tokenizer.tokenize(text)
     token_count = len(tokens)
     num_masks = int(token_count * mask_probability)
     mask_indices = random.sample(range(token_count), num_masks)
-    
+
     masked_tokens = []
     target_tokens = []
     current_mask_id = 0
@@ -41,17 +38,15 @@ def mask_text(text, mask_probability=0.15):
 
     return {"input": masked_text, "target": target_text}
 
-# mask data
+# Mask and tokenize dataset
 masked_data = []
 for example in dataset:
     result = mask_text(example)
     masked_data.append({
-        "input_text": result["input"],  # Masked input text
-        "target_text": result["target"]  # Target text to reconstruct
+        "input_text": result["input"],
+        "target_text": result["target"]
     })
 
-
-# tokenize the masked dataset
 tokenized_data = [
     tokenizer(
         data["input_text"],
@@ -62,8 +57,60 @@ tokenized_data = [
     ) for data in masked_data
 ]
 
-# initiate model
-model = T5ForConditionalGeneration.from_pretrained(model_name)
+# PyTorch dataset
+class FineTuningDataset(torch.utils.data.Dataset):
+    def __init__(self, tokenized_data):
+        self.input_ids = [item["input_ids"] for item in tokenized_data]
+        self.attention_mask = [item["attention_mask"] for item in tokenized_data]
+        self.labels = [item["labels"] for item in tokenized_data]
 
-# initiate training_args
-training_args = TrainingArguments(output_dir="test_trainer")
+    def __len__(self):
+        return len(self.input_ids)
+
+    def __getitem__(self, idx):
+        return {
+            "input_ids": torch.tensor(self.input_ids[idx]),
+            "attention_mask": torch.tensor(self.attention_mask[idx]),
+            "labels": torch.tensor(self.labels[idx]),
+        }
+
+train_dataset = FineTuningDataset(tokenized_data)
+
+# Metrics
+bleu = load("bleu")
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
+    decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+    return bleu.compute(predictions=decoded_preds, references=decoded_labels)
+
+# Training arguments
+training_args = TrainingArguments(
+    output_dir="test_trainer",
+    evaluation_strategy="epoch",
+    learning_rate=5e-5,
+    per_device_train_batch_size=8,
+    num_train_epochs=3,
+    weight_decay=0.01,
+    save_strategy="epoch",
+    save_total_limit=2,
+    fp16=True,
+    logging_dir="./logs",
+    logging_steps=100,
+)
+
+# Trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    compute_metrics=compute_metrics,
+)
+
+# Train and save
+trainer.train()
+model.save_pretrained("finetuned_model")
+tokenizer.save_pretrained("finetuned_model")
+print("Model saved!")
