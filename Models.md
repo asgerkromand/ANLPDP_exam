@@ -13,6 +13,7 @@ Ikke trænet på dansk fra bunden, på en eller anden måde overført med danske
 - https://huggingface.co/KennethTM/gpt2-medium-danish
 - https://huggingface.co/mhenrichsen/danskgpt-tiny-chat
   (Ovenstående har vist 1.1 B parametre selvom den hedder tiny)
+- https://huggingface.co/EleutherAI/gpt-neo-125m
 
 
 # Datasæt
