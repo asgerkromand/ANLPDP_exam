@@ -11,8 +11,8 @@ Ikke trænet på dansk fra bunden, på en eller anden måde overført med danske
 # Andre modeller:
 
 - https://huggingface.co/KennethTM/gpt2-medium-danish
-- https://huggingface.co/Maltehb/aelaectra-danish-electra-small-cased
--Tror den her mest er til named entity recognition og sådan noget, ved ikke lige om den kan bruges til generation
+- https://huggingface.co/mhenrichsen/danskgpt-tiny-chat
+  (Ovenstående har vist 1.1 B parametre selvom den hedder tiny)
 
 
 # Datasæt
