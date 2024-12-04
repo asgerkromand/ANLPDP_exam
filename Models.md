@@ -24,4 +24,5 @@ Ikke trænet på dansk fra bunden, på en eller anden måde overført med danske
 # Evt.
 
 Evt. BERT til encoding - https://huggingface.co/KennethTM
+- https://huggingface.co/vesteinn/DanskBERT
 Har samme gut som tidligere også lavet
