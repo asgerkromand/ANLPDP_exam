@@ -3,3 +3,7 @@
 
 # ignore *.json
 *.json
+
+#
+.csv
+.xlsx
