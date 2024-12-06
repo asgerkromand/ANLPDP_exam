@@ -1,3 +1,5 @@
 # Files to be ignored
 .bib
 *.json
+*.csv
+*.txt
