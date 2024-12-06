@@ -1,3 +1,3 @@
 # ANLPDP_exam
 
-This is the exam repository for Adam, Asger, and Andreas.
+Andreas' branch for the ANLPDP exam. To be merged into main later.
