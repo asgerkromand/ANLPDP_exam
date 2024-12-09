@@ -36,7 +36,7 @@ def calculate_meteor(answers, gold_answers):
     for answer, gold_answer in zip(answers, gold_answers):
         answer_tokens = answer.split()
         gold_answer_tokens = gold_answer.split()
-        score = meteor_score([gold_answer_tokens], answer_tokens)
+        score = meteor_score([gold_answer_tokens], answer_tokens, gamma=0.0)
         scores.append(score)
     return scores
 
