@@ -5,7 +5,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from rank_bm25 import BM25Okapi
 import pandas as pd
-import string
+import re
 import numpy as np
 
 # Functions
@@ -16,10 +16,15 @@ def load_csv(file_path):
 
 # Preprocess the text
 def preprocess(text):
-    # extract and preprocess text8
+    # extract and preprocess text
+    text = re.sub('\\s{2,}', ' ', 
+                               re.sub('\\W|[0-9]|§', ' ',
+                                     text.lower()))
+
+    # Tokenize the text and remove stopwords
     stop_words = set(stopwords.words('danish'))
-    tokens = word_tokenize(text.lower())
-    tokens = [word for word in tokens if word not in stop_words and word not in string.punctuation]
+    tokens = word_tokenize(text)
+    tokens = [word for word in tokens if word not in stop_words]
     return tokens
 
 # Initialize the BM25 corpus
