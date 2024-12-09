@@ -16,10 +16,14 @@ def load_csv(file_path):
 
 # Preprocess the text
 def preprocess(text):
-    # extract and preprocess text
-    text = re.sub('\\s{2,}', ' ', 
-                               re.sub('\\W|[0-9]|§', ' ',
-                                     text.lower()))
+    # Convert text to lowercase
+    text = text.lower()
+    
+    # Remove non-word characters, digits, and the section symbol
+    text = re.sub('\\W|[0-9]|§', ' ', text)
+    
+    # Replace multiple spaces with a single space
+    text = re.sub('\\s{2,}', ' ', text)
 
     # Tokenize the text and remove stopwords
     stop_words = set(stopwords.words('danish'))
@@ -31,14 +35,4 @@ def preprocess(text):
 def init_bm25_corpus(corpus):
     # Initialize the BM25 corpus
     return BM25Okapi(corpus)
-
-# Get the ranked scores
-def get_ranked_scores(bm25_corpus, query, n_ranked = None):
-    # Get scores
-    scores = bm25_corpus.get_scores(query)
-    # Rank the scores
-    if n_ranked is not None:
-        return np.argsort(scores)[::-1][:n_ranked]
-    else:
-        return np.argsort(scores)[::-1]
 
