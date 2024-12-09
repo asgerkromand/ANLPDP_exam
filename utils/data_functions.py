@@ -66,7 +66,7 @@ def tfidf_vectorizer(rag_list):
     #nltk.download('punkt')
     stop_words = set(stopwords.words('danish'))
     corpus = [' '.join(word for word in text.split() 
-                      if word not in stop_words) for text in tqdm(corpus)]
+                      if word not in stop_words) for text in corpus]
     
     # vectorize
     vectorizer = TfidfVectorizer()
@@ -185,11 +185,11 @@ def dense_retrieval(question, embeddings, corpus, tokenizer, model, pooling='cls
     """
     
     # encode the input
-    input_ids = bert_tokenizer.encode(question, return_tensors="pt")
+    input_ids = tokenizer.encode(question, return_tensors="pt")
 
     # pass the input through the model
     with torch.no_grad():  # no backprop needed
-        outputs = bert_model(input_ids)
+        outputs = model(input_ids)
     
     if pooling == 'cls':
         embedding_vector = outputs.last_hidden_state[:, 0, :]
@@ -202,7 +202,7 @@ def dense_retrieval(question, embeddings, corpus, tokenizer, model, pooling='cls
     
     # normalise embeddings (to get cosine similarity from dot product)
     embedding_vector_normalised = embedding_vector / torch.norm(embedding_vector, dim=-1, keepdim=True)
-    embeddings_matrix_normalised = embeddings_matrix / torch.norm(embeddings_matrix, dim=-1, keepdim=True)
+    embeddings_matrix_normalised = embeddings / torch.norm(embeddings, dim=-1, keepdim=True)
 
     # get paragraphs with highest similarity scores
     dense_retrieval = embeddings_matrix_normalised @ torch.transpose(embedding_vector_normalised, 0, 1)
