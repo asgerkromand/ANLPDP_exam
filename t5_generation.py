@@ -16,16 +16,14 @@ for col in columns_to_convert:
     dev_set[col] = dev_set[col].apply(ast.literal_eval)
 
 
-# load the model and tokenizer
-MODEL_NAME = "KennethTM/gpt-neo-1.3B-danish"
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-
-# set the device
+# load model and tokenizer and set device
+model_name = "strombergnlp/dant5-large"  
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu" # set up for mac here, change to cuda if needed
 model.to(DEVICE)
 
-def generate_answers(retriever, k_retrievals):
+def generate_answers(retriever, k_retrievals, output_directory):
     """
     Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
     aided by retrieved legal paragraphs.
@@ -40,35 +38,32 @@ def generate_answers(retriever, k_retrievals):
 
     neo_answers = []
 
-    # iterating through questions and retrieved documents
-    for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set[retriever]), desc='Answering questions'):
+    t5_answers = []
 
-        # assemble documents into a single string with newlines between each paragraph
-        documents = '\n'.join([item for item in retrieval_column][:k_retrievals])
+    # Example question and context
 
-        # assemble a prompt from the documents, question and prompting an answer
-        prompt = f"Relevante paragraffer: {documents} Spørgsmål: {question} Indsæt svar her baseret på de relevante paragraffer:"
+    for question, documents in tqdm(zip(dev_set['question'], dev_set[retriever]), desc='Answering questions'):
+        
+        # Format the input for T5
+        input_text = f"Relevante paragraffer: {documents}\nSpørgsmål: {question}\nIndsæt svar her baseret på de relevante paragraffer:"
 
-        # tokenize
-        input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(DEVICE)
+        # Tokenize the input and generate an answer
+        input_ids = tokenizer(input_text, return_tensors="pt").input_ids.to(DEVICE)
 
         max_length = len(input_ids[0]) + 100
 
-        # generate an answer within torch.no_grad() to save compute
         with torch.no_grad():
             outputs = model.generate(
                 input_ids,
                 max_length=max_length,
                 pad_token_id=tokenizer.eos_token_id,
-                # generation set to stop at '.' as it otherwise just repeats itself (think it's because we don't sample)
+                # generation set to stop at ' Spørgsmål' as it otherwise just repeats itself (think it's because we don't sample)
                 eos_token_id=tokenizer.encode(' Spørgsmål')[0]
             )
 
-        # decode generated answer
+        # Decode and print the generated answer
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True).strip(' Spørgsmål')
-
-        # append answer to list
-        neo_answers.append(answer[len(prompt):].strip())  # strip the prompt to leave just the answer
+        t5_answers.append(answer)
 
     return neo_answers
 
@@ -86,7 +81,7 @@ if __name__ == "__main__":
     retriever = args.retriever
     k_retrievals = args.k_retrievals
 
-    answers = generate_answers(retriever, k_retrievals)
+    answers = generate_answers(retriever, k_retrievals, output_directory)
 
     with open(f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
             outfile.write('\n'.join(str(i) for i in answers))
