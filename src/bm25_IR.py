@@ -33,6 +33,4 @@ def preprocess(text):
 
 # Initialize the BM25 corpus
 def init_bm25_corpus(corpus):
-    # Initialize the BM25 corpus
-    return BM25Okapi(corpus)
-
+    # Initialize the 
