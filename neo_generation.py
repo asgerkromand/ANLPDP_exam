@@ -79,8 +79,7 @@ def generate_answers(retriever, k_retrievals, output_directory):
         # append answer to list
         neo_answers.append(answer[len(prompt):].strip())  # strip the prompt to leave just the answer
 
-    with open(f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}', 'w') as outfile:
-            outfile.write('\n'.join(str(i) for i in neo_answers))
+    return neo_answers
 
 
 if __name__ == "__main__":
@@ -96,6 +95,9 @@ if __name__ == "__main__":
     retriever = args.retriever
     k_retrievals = args.k_retrievals
 
-    generate_answers(retriever, k_retrievals, output_directory)
+    answers = generate_answers(retriever, k_retrievals, output_directory)
+
+    with open(f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}', 'w') as outfile:
+            outfile.write('\n'.join(str(i) for i in answers))
 
     print(f"Generated answers saved to saved to f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}'")
