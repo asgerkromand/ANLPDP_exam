@@ -6,9 +6,6 @@ from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM, T5ForCo
 import ast
 import sys
 
-
-k_retrievals = # find ud af hvordan du kan linke det her til argparse
-
 # load dev_set
 dev_set = pd.read_csv('output/devset/dev_set_w_IR.csv')
 
@@ -28,7 +25,18 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu" # set up for mac here, change to cuda if needed
 model.to(DEVICE)
 
-def generate_answers(retriever, k_retrievals, output_path):
+def generate_answers(retriever, k_retrievals, output_directory):
+    """
+    Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
+    aided by retrieved legal paragraphs.
+
+    Saves a .txt-file containing a list of answers to the asked questions in the output_directory.
+
+    Args:
+        retriever: 'tf_idf', 'bm25', 'dense_cls', 'dense_max' or 'dense_mean'
+        k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
+        output_path: output_path for the the .txt-file, default directory is output/devset
+    """
 
     if retriever == 'dense_cls':
          embeddings_matrix = torch.load('output/embeddings/cls_embeddings_DanskBERT.pt')
@@ -41,7 +49,7 @@ def generate_answers(retriever, k_retrievals, output_path):
 
     neo_answers = []
 
-    # evaluating tf-idf
+    # iterating through questions and retrieved documents
     for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set[retriever]), desc='Answering questions'):
 
         # assemble documents into a single string with newlines between each paragraph
@@ -71,7 +79,7 @@ def generate_answers(retriever, k_retrievals, output_path):
         # append answer to list
         neo_answers.append(answer[len(prompt):].strip())  # strip the prompt to leave just the answer
 
-    with open(f'{output_path}/neo_gen_{retriever}_k{k_retrievals}', 'w') as outfile:
+    with open(f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}', 'w') as outfile:
             outfile.write('\n'.join(str(i) for i in neo_answers))
 
 
@@ -79,15 +87,15 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'KennethTM/gpt-neo-1.3B-danish' model to generate answers")
-    parser.add_argument("output_path", type=str, default="output/devset", help="Path to the output file.")
+    parser.add_argument("output_directory", type=str, default="output/devset", help="Path to the output file.")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tf-idf', 'bm25' or 'dense')")
     parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 1 to 3")
     args = parser.parse_args()
 
-    output_path = args.output_path
+    output_directory = args.output_path
     retriever = args.retriever
     k_retrievals = args.k_retrievals
 
-    generate_answers(retriever, k_retrievals, output_path)
-    
-    print(f"Embeddings saved to {output_path}")
+    generate_answers(retriever, k_retrievals, output_directory)
+
+    print(f"Generated answers saved to saved to f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}'")
