@@ -3,9 +3,20 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM, T5ForConditionalGeneration
+import ast
+
+k_retrievals = # find ud af hvordan du kan linke det her til argparse
 
 # load dev_set
 dev_set = pd.read_csv('output/devset/dev_set_w_IR.csv')
+
+# converting list columns back to list columns as they are loaded as strings
+columns_to_convert = ['tf_idf', 'bm25', 'dense_cls', 'dense_max', 'dense_mean']
+
+for col in columns_to_convert:
+    dev_set[col] = dev_set[col].apply(ast.literal_eval)
+
+
 
 # load the model and tokenizer
 MODEL_NAME = "KennethTM/gpt-neo-1.3B-danish"
@@ -20,7 +31,10 @@ def tf_idf_gen():
     neo_answers_tf_idf_k1 = []
 
     # evaluating tf-idf
-    for question, documents in tqdm(zip(dev_set['question'], dev_set['tf_idf_k1']), desc='Answering questions'):
+    for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set['tf_idf_k1']), desc='Answering questions'):
+
+        # assemble documents into a single string with newlines between each paragraph
+        documents = '\n'.join([item for item in retrieval_column][:k_retrievals])
 
         # assemble a prompt from the documents, question and prompting an answer
         prompt = f"Relevante paragraffer: {documents} Spørgsmål: {question} Indsæt svar her baseret på de relevante paragraffer:"
