@@ -121,7 +121,7 @@ def main():
     save_tensor(embeddings, args.output_path, pooling_method=args.pooling_method)
 
 if __name__ == "__main__":
-    # Example usage: python generate_embeddings.py input.json output.pt --pooling_method mean --model_name vesteinn/DanskBERT
+    # Example commandline usage: python generate_embeddings.py ../rag_list.jsonl output/embeddings_DanishBERT.pt --pooling_method CLS --model_name vesteinn/DanskBERT --batch_size 32
     main()
 
     
