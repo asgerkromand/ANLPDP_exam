@@ -30,12 +30,11 @@ def generate_answers(retriever, k_retrievals):
     Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
     aided by retrieved legal paragraphs.
 
-    Saves a .txt-file containing a list of answers to the asked questions in the output_directory.
+    Returns a list of abovementioned answers.
 
     Args:
         retriever: 'tf_idf', 'bm25', 'dense_cls', 'dense_max' or 'dense_mean'
         k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
-        output_path: output_path for the the .txt-file, default directory is output/devset
     """
 
     neo_answers = []
@@ -88,7 +87,7 @@ if __name__ == "__main__":
 
     answers = generate_answers(retriever, k_retrievals)
 
-    with open(f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
+    with open(f'{output_directory}/t5_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
             outfile.write('\n'.join(str(i) for i in answers))
 
     print(f"Generated answers saved to saved to f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}'")

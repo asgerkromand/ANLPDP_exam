@@ -25,18 +25,15 @@ model.to(DEVICE)
 
 def generate_answers(retriever, k_retrievals, output_directory):
     """
-    Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
+    Generates answers to legal questions with the huggingface-model 'strombergnlp/dant5-large',
     aided by retrieved legal paragraphs.
 
-    Saves a .txt-file containing a list of answers to the asked questions in the output_directory.
+    Returns a list of abovementioned answers.
 
     Args:
         retriever: 'tf_idf', 'bm25', 'dense_cls', 'dense_max' or 'dense_mean'
         k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
-        output_path: output_path for the the .txt-file, default directory is output/devset
     """
-
-    neo_answers = []
 
     t5_answers = []
 
@@ -65,7 +62,7 @@ def generate_answers(retriever, k_retrievals, output_directory):
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True).strip(' Spørgsmål')
         t5_answers.append(answer)
 
-    return neo_answers
+    return t5_answers
 
 
 if __name__ == "__main__":
