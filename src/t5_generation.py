@@ -1,10 +1,8 @@
 import pandas as pd
-import numpy as np
 import torch
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM, T5ForConditionalGeneration
+from transformers import AutoTokenizer, T5ForConditionalGeneration
 import ast
-import sys
 
 # load dev_set
 dev_set = pd.read_csv('output/devset/dev_set_w_IR.csv')
