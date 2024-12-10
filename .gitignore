@@ -5,3 +5,6 @@
 *.txt
 *.pt
 venv/
+.venv/
+*venv*/
+*.venv*/
