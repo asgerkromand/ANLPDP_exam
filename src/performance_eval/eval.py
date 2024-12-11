@@ -43,7 +43,7 @@ if __name__ == "__main__":
     
     parser.add_argument('--gold-answers', type=str, default="data/dev_set.csv",
                         help='Path to CSV file containing gold answers')
-    parser.add_argument('--inference-dir', type=str, default="output/inference",
+    parser.add_argument('--inference-dir', type=str, default="output",
                         help='Directory containing model inference output files')
     parser.add_argument('--plot', type=str,
                         help='Path to save plot image')
