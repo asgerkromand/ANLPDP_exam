@@ -1,6 +1,6 @@
-# Project Title
+# Exam Project: RAG in Danish Legal Q/A - Testing RAG with GPT and T5 
 
-A short description about the project and/or client.
+A short description about the project and/or client. Bertil.
 
 ## Getting Started
 
