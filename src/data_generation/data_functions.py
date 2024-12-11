@@ -66,6 +66,42 @@ def generate_rag_list(input_file, output_file):
             file.write(f"{item}\n")
     return rag_list
 
+def generate_paragraphs(input_file, output_file):
+    """
+    Generates a list of dictionaries containing paragraph information from legal documents.
+    
+    Args:
+        input_file: Path to input JSON file containing legal document data
+        output_file: Path to output file to write the processed data
+        
+    Returns:
+        rag_list: List of dictionaries, where each dictionary contains:
+            - paragraf_nr: Paragraph number
+            - lovnavn: Name of the law
+            - text: Combined text of all subsections in the paragraph
+    """
+    with open(input_file) as f:
+        retsinfo = json.load(f)
+
+    paragraphs = []
+    idx = 0
+    for lov in retsinfo:
+        for kapitel in lov['kapitler']:
+            lov_navn = lov['shortName']
+            for paragraffer in kapitel['paragraffer']:
+                temp_paragraf_dict = {}
+                temp_paragraf_dict['paragraf_nr'] = paragraffer['nummer']
+                temp_paragraf_dict['lovnavn'] = lov_navn
+                temp_paragraf_list = []
+                for styk in paragraffer['stk']:
+                    temp_paragraf_list.append(styk['tekst'])
+                temp_paragraf_dict['text'] = ' '.join(temp_paragraf_list)
+                paragraphs.append(temp_paragraf_dict)
+
+    paragraphs = replace_nbsp(paragraphs)
+    return paragraphs
+
+
 def tfidf_vectorizer(rag_list):
     """
     Preprocess and vectorize a corpus of text using TF-IDF
