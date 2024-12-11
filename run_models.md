@@ -16,11 +16,52 @@ $ python t5_generation.py --retriever [insert retriever name] --k_retrievals [1 
 
 
 Adam:
-all k=2
+
+Before you run any other code, change directory to src/model_inference:
+$ cd src/model_inference
+
+Commands:
+$ python neo_generation.py --retriever tfidf --k_retrievals 2
+$ python neo_generation.py --retriever bm25 --k_retrievals 2
+$ python neo_generation.py --retriever bert_cls --k_retrievals 2
+$ python neo_generation.py --retriever bert_mean --k_retrievals 2
+$ python neo_generation.py --retriever bert_max --k_retrievals 2
+$ python t5_generation.py --retriever tfidf --k_retrievals 2
+$ python t5_generation.py --retriever bm25 --k_retrievals 2
+$ python t5_generation.py --retriever bert_cls --k_retrievals 2
+$ python t5_generation.py --retriever bert_mean --k_retrievals 2
+$ python t5_generation.py --retriever bert_max --k_retrievals 2
 
 Andreas:
-all k=3
+
+Before you run any other code, change directory to src/model_inference:
+$ cd src/model_inference
+
+Commands:
+$ python neo_generation.py --retriever tfidf --k_retrievals 3
+$ python neo_generation.py --retriever bm25 --k_retrievals 3
+$ python neo_generation.py --retriever bert_cls --k_retrievals 3
+$ python neo_generation.py --retriever bert_mean --k_retrievals 3
+$ python neo_generation.py --retriever bert_max --k_retrievals 3
+$ python t5_generation.py --retriever tfidf --k_retrievals 3
+$ python t5_generation.py --retriever bm25 --k_retrievals 3
+$ python t5_generation.py --retriever bert_cls --k_retrievals 3
+$ python t5_generation.py --retriever bert_mean --k_retrievals 3
+$ python t5_generation.py --retriever bert_max --k_retrievals 3
 
 Asger:
-all k=1
+
+Before you run any other code, change directory to src/model_inference:
+$ cd src/model_inference
+
+$ python neo_generation.py --retriever tfidf --k_retrievals 1
+$ python neo_generation.py --retriever bm25 --k_retrievals 1
+$ python neo_generation.py --retriever bert_cls --k_retrievals 1
+$ python neo_generation.py --retriever bert_mean --k_retrievals 1
+$ python neo_generation.py --retriever bert_max --k_retrievals 1
+$ python t5_generation.py --retriever tfidf --k_retrievals 1
+$ python t5_generation.py --retriever bm25 --k_retrievals 1
+$ python t5_generation.py --retriever bert_cls --k_retrievals 1
+$ python t5_generation.py --retriever bert_mean --k_retrievals 1
+$ python t5_generation.py --retriever bert_max --k_retrievals 1
 
