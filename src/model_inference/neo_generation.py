@@ -22,7 +22,7 @@ def generate_answers(retriever, k_retrievals):
 
     Args:
         retriever: 'tfidf', 'bm25', 'bert_cls', 'bert_max' or 'bert_mean'
-        k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
+        k_retrievals: integer between 0 to 3 denoting the amount of retrieved documents (paragraphs)
     """
 
     neo_answers = []
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'KennethTM/gpt-neo-1.3B-danish' model to generate answers")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tfidf', 'bm25', 'bert_cls', 'bert_max' and 'bert_mean')")
-    parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 1 to 3")
+    parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 0 to 3")
     args = parser.parse_args()
 
     retriever = args.retriever
