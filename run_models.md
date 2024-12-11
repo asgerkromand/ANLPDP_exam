@@ -4,7 +4,7 @@
 
 Change directory to the folder:
 ```
-$ cd src/model_inference
+$ cd [your_local_path/]src/model_inference
 ```
 
 Generalised command:
@@ -17,7 +17,7 @@ $ python neo_generation.py --retriever [insert retriever name] --k_retrievals [1
 
 Change directory to the folder:
 ```
-$ cd src/model_inference
+$ cd [your_local_path/]src/model_inference
 ```
 
 Generalised command:
