@@ -13,6 +13,7 @@ from eval_functions import *
 def main(args):
     # load the devset
     gold_answers = pd.read_csv(args.gold_answers).astype(str)['answer'].tolist()
+    print(f"Loaded {len(gold_answers)} gold answers")
 
     # load all answers output/inference (.txt files separated by newlines)
     model_answers = {}
@@ -23,14 +24,18 @@ def main(args):
             model_name = file.replace(".txt", "")
             with open(f"{args.inference_dir}/{file}", "r") as f:
                 model_answers[model_name] = f.read().splitlines()
+                print(f"Loaded answers from model: {model_name}")
 
     # evaluate the answers
     model_answers_list = list(model_answers.values())
-    results = evaluate_answers(model_answers_list, gold_answers)
+    model_names = list(model_answers.keys())
+    results = evaluate_answers(model_answers_list, gold_answers, model_names)
+    print("\nEvaluation Results:")
+    print(pd.DataFrame(results))
 
-    # plot the results if specified
-    if args.plot:
-        plot_model_scores(results, metrics=args.metrics, titles=args.titles, save_path=args.plot)
+    # comparison plot
+    if args.comparison_plot:
+        comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot)
     
     # save the results to a csv file if specified
     if args.save_results:
@@ -45,14 +50,15 @@ if __name__ == "__main__":
                         help='Path to CSV file containing gold answers')
     parser.add_argument('--inference-dir', type=str, default="output",
                         help='Directory containing model inference output files')
-    parser.add_argument('--plot', type=str,
-                        help='Path to save plot image')
+    parser.add_argument('--comparison-plot', type=str,
+                        help='Path to save comparison plot image')
     parser.add_argument('--save-results', type=str,
                         help='Path to save evaluation results CSV')
     parser.add_argument('--metrics', nargs='+', 
                         help='List of metrics to plot (e.g., BLEU ROUGE-1 ROUGE-2 ROUGE-L METEOR)')
     parser.add_argument('--titles', nargs='+',
                         help='Custom titles for the plots')
+
     
     args = parser.parse_args()
     main(args)

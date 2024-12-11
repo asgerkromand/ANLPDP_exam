@@ -48,13 +48,15 @@ def calculate_avg_scores(answers, gold_answers):
     return np.mean(bleu_scores), np.mean(rouge1_scores), np.mean(rouge2_scores), np.mean(rougeL_scores), np.mean(meteor_scores)
 
 # function to evalualate answers from different models
-def evaluate_answers(model_answers_list, gold_answers):
+def evaluate_answers(model_answers_list, gold_answers, model_names=None):
     """
     Evaluates multiple models' answers against gold answers using various metrics
     
     Args:
         model_answers_list: List of lists, where each inner list contains answers from one model
         gold_answers: List of gold/reference answers
+        model_names: Optional list of model names corresponding to the answers. If not provided,
+                    defaults to "model_1", "model_2", etc.
     
     Returns:
         Dictionary of scores for each model
@@ -62,7 +64,8 @@ def evaluate_answers(model_answers_list, gold_answers):
     results = {}
     for i, answers in enumerate(model_answers_list):
         bleu_avg, rouge1_avg, rouge2_avg, rougeL_avg, meteor_avg = calculate_avg_scores(answers, gold_answers)
-        results[f'model_{i+1}'] = {
+        model_key = model_names[i] if model_names and i < len(model_names) else f'model_{i+1}'
+        results[model_key] = {
             'BLEU': bleu_avg,
             'ROUGE-1': rouge1_avg, 
             'ROUGE-2': rouge2_avg,
@@ -112,4 +115,41 @@ def plot_model_scores(results, metrics=None, titles=None, save_path=None):
     else:
         plt.show()
     
+    return fig
+
+def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=(15, 12)):
+ 
+    # set up plot (5 rows)
+    fig, axes = plt.subplots(5, 1, figsize=figsize)
+    axes = axes.ravel()
+
+    # get unique model names after stripping _k1, _k2, _k3
+    model_names = list(set(model.replace('_k1', '').replace('_k2', '').replace('_k3', '') for model in results.keys()))
+
+    # y axis max value
+    max_value = max(max(scores.values()) for scores in results.values())
+
+    # Plot each model type in its own panel with all k configurations
+    for idx, model in enumerate(model_names):
+        ax = axes[idx]
+        x_positions = np.arange(len(results[f'{model}_k1'].keys()))
+        width = 0.25  # Width of bars
+        
+        # Plot bars for each k value side by side
+        ax.bar(x_positions - width, results[f'{model}_k1'].values(), width, label='p=1')
+        ax.bar(x_positions, results[f'{model}_k2'].values(), width, label='p=2')
+        ax.bar(x_positions + width, results[f'{model}_k3'].values(), width, label='p=3')
+        
+        ax.set_title(f'{model}')
+        ax.set_xticks(x_positions)
+        ax.set_xticklabels(results[f'{model}_k1'].keys())
+        ax.tick_params(axis='x')
+        ax.set_ylim(0, max_value * 1.1)
+        ax.legend()
+
+    plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path)
+    else:
+        plt.show()
     return fig
