@@ -31,7 +31,7 @@ Adam:
 Before you run any other code, change directory to src/model_inference:
 
 ```
-$ cd src/model_inference
+$ cd [your_local_path/]src/model_inference
 ```
 
 Commands:
@@ -52,7 +52,7 @@ Andreas:
 
 Before you run any other code, change directory to src/model_inference:
 ```
-$ cd src/model_inference
+$ cd [your_local_path/]src/model_inference
 ```
 
 Commands:
@@ -73,7 +73,7 @@ Asger:
 
 Before you run any other code, change directory to src/model_inference:
 ```
-$ cd src/model_inference
+$ cd [your_local_path/]src/model_inference
 ```
 
 Commands:
