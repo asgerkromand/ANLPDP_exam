@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     answers = generate_answers(retriever, k_retrievals)
 
-    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as file:
+    with open(f'../../output/inference/t5_gen_{retriever}_k{k_retrievals}.txt', 'w') as file:
         for answer in answers:
             file.write(answer + '\n')
 
