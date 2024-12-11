@@ -4,14 +4,6 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import ast
 
-# load dev_set
-file_path = "output/devset/devset_with_contexts.parquet.gzip"
-with open(file_path, "rb") as f:
-    dev_set = pd.read_parquet(f)
-
-# converting list columns back to list columns as they are loaded as strings
-columns_to_convert = ['tf_idf', 'bm25', 'dense_cls', 'dense_max', 'dense_mean']
-
 # load the model and tokenizer
 MODEL_NAME = "KennethTM/gpt-neo-1.3B-danish"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -29,14 +21,14 @@ def generate_answers(retriever, k_retrievals):
     Returns a list of abovementioned answers.
 
     Args:
-        retriever: 'tf_idf', 'bm25', 'dense_cls', 'dense_max' or 'dense_mean'
+        retriever: 'tfidf', 'bm25', 'bert_cls', 'bert_max' or 'bert_mean'
         k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
     """
 
     neo_answers = []
 
     # iterating through questions and retrieved documents
-    for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set[retriever]), desc='Answering questions'):
+    for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set[str(retriever+'_context')]), desc='Answering questions'):
 
         # assemble documents into a single string with newlines between each paragraph
         documents = '\n'.join([item for item in retrieval_column][:k_retrievals])
@@ -72,18 +64,21 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'KennethTM/gpt-neo-1.3B-danish' model to generate answers")
-    parser.add_argument("--output_directory", type=str, default="output/inference", help="Path to the output file.")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tf-idf', 'bm25' or 'dense')")
     parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 1 to 3")
     args = parser.parse_args()
 
-    output_directory = args.output_directory
     retriever = args.retriever
     k_retrievals = args.k_retrievals
 
+    # load dev_set
+    file_path = "../../output/devset/devset_with_contexts.parquet.gzip"
+    with open(file_path, "rb") as f:
+        dev_set = pd.read_parquet(f)
+
     answers = generate_answers(retriever, k_retrievals)
 
-    with open(f'{output_directory}/t5_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
+    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
             outfile.write('\n'.join(str(i) for i in answers))
 
-    print(f"Generated answers saved to saved to f'{output_directory}/neo_gen_{retriever}_k{k_retrievals}'")
+    print(f"Generated answers saved to saved to ", f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt')
