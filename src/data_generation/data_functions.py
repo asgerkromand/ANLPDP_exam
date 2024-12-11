@@ -266,6 +266,6 @@ def dense_retrieval(question, embeddings, corpus, tokenizer, model, pooling='cls
     sorted_retrieval = torch.sort(dense_retrieval, descending=True, stable=True, dim=0)
     fixed_retrieval_list = [(item, idx) for (item, idx) in zip(sorted_retrieval[0], sorted_retrieval[1]) if torch.isnan(item) == False]
     top_k_indices = [item[1] for item in fixed_retrieval_list[:k]]
-    document = '\n'.join([corpus[i]['text'] for i in top_k_indices])
+    document = [corpus[i]['text'] for i in top_k_indices]
 
     return document
