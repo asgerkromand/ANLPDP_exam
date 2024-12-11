@@ -36,7 +36,7 @@ def generate_answers(retriever, k_retrievals):
         prompt = f"Relevante paragraffer: {documents} Spørgsmål: {question} Indsæt svar her baseret på de relevante paragraffer:"
 
         # Tokenize
-        input_ids = tokenizer(prompt, return_tensors="pt", max_length=1024, truncation=True).input_ids.to(DEVICE)
+        input_ids = tokenizer(prompt, return_tensors="pt", max_length=924, truncation=True).input_ids.to(DEVICE)
         max_length = len(input_ids[0]) + 100
 
         # Generate an answer within torch.no_grad() to save compute
