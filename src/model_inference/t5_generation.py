@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'KennethTM/gpt-neo-1.3B-danish' model to generate answers")
-    parser.add_argument("--output_directory", type=str, default="output/devset", help="Path to the output file.")
+    parser.add_argument("--output_directory", type=str, default="output/inference", help="Path to the output file.")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tf-idf', 'bm25' or 'dense')")
     parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 1 to 3")
     args = parser.parse_args()
