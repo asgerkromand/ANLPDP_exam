@@ -1,8 +1,8 @@
 import pandas as pd
 import torch
 from tqdm import tqdm
-import json
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import re
 
 # load the model and tokenizer
 MODEL_NAME = "KennethTM/gpt-neo-1.3B-danish"
@@ -18,7 +18,7 @@ def generate_answers(retriever, k_retrievals):
     Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
     aided by retrieved legal paragraphs.
 
-    Saves all generated answers to a .jsonl file after processing.
+    Saves all generated answers to a .txt file after processing.
 
     Args:
         retriever: 'tfidf', 'bm25', 'bert_cls', 'bert_max' or 'bert_mean'
@@ -54,8 +54,9 @@ def generate_answers(retriever, k_retrievals):
         # Strip the prompt to leave just the answer
         final_answer = answer[len(prompt):].strip()
 
+        final_answer = re.sub('\n', ' ', final_answer)
         # Append the question and answer as a dictionary to the list
-        neo_answers_list.append({'question': question, 'answer': final_answer})
+        neo_answers_list.append(final_answer)
 
     return neo_answers_list
 
@@ -77,10 +78,8 @@ if __name__ == "__main__":
 
     answers = generate_answers(retriever, k_retrievals)
 
-    # Save all answers to a .jsonl file
-    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.jsonl', 'w') as file:
-        for entry in answers:
-            json.dump(entry, file)
-            file.write('\n')
+    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as file:
+        for answer in answers:
+            file.write(answer + '\n')
 
-    print(f"Answers saved to output/inference/neo_gen_{retriever}_k{k_retrievals}.jsonl")
+    print(f"Answers saved to output/inference/neo_gen_{retriever}_k{k_retrievals}.txt")
