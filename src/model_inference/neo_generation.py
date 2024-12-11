@@ -1,6 +1,7 @@
 import pandas as pd
 import torch
 from tqdm import tqdm
+import json
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import ast
 
@@ -18,47 +19,46 @@ def generate_answers(retriever, k_retrievals):
     Generates answers to legal questions with the huggingface-model 'KennethTM/gpt-neo-1.3B-danish',
     aided by retrieved legal paragraphs.
 
-    Returns a list of abovementioned answers.
+    Saves all generated answers to a .jsonl file after processing.
 
     Args:
         retriever: 'tfidf', 'bm25', 'bert_cls', 'bert_max' or 'bert_mean'
         k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
     """
 
-    neo_answers = []
+    neo_answers_list = []  # List to collect all answers
 
-    # iterating through questions and retrieved documents
+    # Iterating through questions and retrieved documents
     for question, retrieval_column in tqdm(zip(dev_set['question'], dev_set[str(retriever+'_context')]), desc='Answering questions'):
-
-        # assemble documents into a single string with newlines between each paragraph
+        # Assemble documents into a single string with newlines between each paragraph
         documents = '\n'.join([item for item in retrieval_column][:k_retrievals])
 
-        # assemble a prompt from the documents, question and prompting an answer
+        # Assemble a prompt from the documents, question, and prompting an answer
         prompt = f"Relevante paragraffer: {documents} Spørgsmål: {question} Indsæt svar her baseret på de relevante paragraffer:"
 
-        # tokenize
+        # Tokenize
         input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(DEVICE)
-
         max_length = len(input_ids[0]) + 100
 
-        # generate an answer within torch.no_grad() to save compute
+        # Generate an answer within torch.no_grad() to save compute
         with torch.no_grad():
             outputs = model.generate(
                 input_ids,
                 max_length=max_length,
                 pad_token_id=tokenizer.eos_token_id,
-                # generation set to stop at '.' as it otherwise just repeats itself (think it's because we don't sample)
                 eos_token_id=tokenizer.encode(' Spørgsmål')[0]
             )
 
-        # decode generated answer
+        # Decode generated answer
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True).strip(' Spørgsmål')
 
-        # append answer to list
-        neo_answers.append(answer[len(prompt):].strip())  # strip the prompt to leave just the answer
+        # Strip the prompt to leave just the answer
+        final_answer = answer[len(prompt):].strip()
 
-    return neo_answers
+        # Append the question and answer as a dictionary to the list
+        neo_answers_list.append({'question': question, 'answer': final_answer})
 
+    return neo_answers_list
 
 if __name__ == "__main__":
 
@@ -78,7 +78,10 @@ if __name__ == "__main__":
 
     answers = generate_answers(retriever, k_retrievals)
 
-    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
-            outfile.write('\n'.join(str(i) for i in answers))
+    # Save all answers to a .jsonl file
+    with open(f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.jsonl', 'w') as file:
+        for entry in answers:
+            json.dump(entry, file)
+            file.write('\n')
 
-    print(f"Generated answers saved to saved to ", f'../../output/inference/neo_gen_{retriever}_k{k_retrievals}.txt')
+    print(f"Answers saved to output/inference/neo_gen_{retriever}_k{k_retrievals}.jsonl")

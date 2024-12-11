@@ -1,6 +1,7 @@
 import pandas as pd
 import torch
 from tqdm import tqdm
+import json
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import ast
 
@@ -8,9 +9,6 @@ import ast
 file_path = "output/devset/devset_with_contexts.parquet.gzip"
 with open(file_path, "rb") as f:
     dev_set = pd.read_parquet(f)
-
-# converting list columns back to list columns as they are loaded as strings
-columns_to_convert = ['tf_idf', 'bm25', 'dense_cls', 'dense_max', 'dense_mean']
 
 # load model and tokenizer and set device
 model_name = "strombergnlp/dant5-large"  
@@ -31,7 +29,7 @@ def generate_answers(retriever, k_retrievals, output_directory):
         k_retrievals: integer between 1 to 3 denoting the amount of retrieved documents (paragraphs)
     """
 
-    t5_answers = []
+    t5_answers_list = []
 
     # Example question and context
 
@@ -56,27 +54,27 @@ def generate_answers(retriever, k_retrievals, output_directory):
 
         # Decode and print the generated answer
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True).strip(' Spørgsmål')
-        t5_answers.append(answer)
+        t5_answers_list.append(answer)
 
-    return t5_answers
+    return t5_answers_list
 
 
 if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'strombergnlp/dant5-large")
-    parser.add_argument("--output_directory", type=str, default="output/inference", help="Path to the output file.")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tf-idf', 'bm25' or 'dense')")
     parser.add_argument("--k_retrievals", type=int, default=1, help="Number of retrievals, ranging from 1 to 3")
     args = parser.parse_args()
 
-    output_directory = args.output_directory
     retriever = args.retriever
     k_retrievals = args.k_retrievals
 
-    answers = generate_answers(retriever, k_retrievals, output_directory)
+    answers = generate_answers(retriever, k_retrievals)
 
-    with open(f'{output_directory}/t5_gen_{retriever}_k{k_retrievals}.txt', 'w') as outfile:
-            outfile.write('\n'.join(str(i) for i in answers))
+    with open(f'../../output/inference/t5_gen_{retriever}_k{k_retrievals}.jsonl', 'w') as file:
+        for entry in answers:
+            json.dump(entry, file)
+            file.write('\n')
 
-    print(f"Generated answers saved to saved to f'{output_directory}/t5_gen_{retriever}_k{k_retrievals}'")
+    print(f"Answers saved to output/inference/t5_gen_{retriever}_k{k_retrievals}.jsonl")
