@@ -5,7 +5,9 @@ from transformers import AutoTokenizer, T5ForConditionalGeneration
 import ast
 
 # load dev_set
-dev_set = pd.read_csv('output/devset/dev_set_w_IR.csv')
+file_path = "output/devset/devset_with_contexts.parquet.gzip"
+with open(file_path, "rb") as f:
+    dev_set = pd.read_parquet(f)
 
 # converting list columns back to list columns as they are loaded as strings
 columns_to_convert = ['tf_idf', 'bm25', 'dense_cls', 'dense_max', 'dense_mean']

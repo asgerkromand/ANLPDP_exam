@@ -64,5 +64,8 @@ devset['bert_mean_context'] = devset['question'].apply(lambda x: dense_retrieval
                                                                                  model=bert_model, 
                                                                                  pooling='mean'))
 
-# save the devset with the contexts
-devset.to_csv("output/devset/devset_with_contexts.csv", index=False)
+# Write to Parquet with gzip compression
+file_path = "output/devset/devset_with_contexts.parquet.gzip"
+
+with open(file_path, "wb") as f:
+    devset.to_parquet(f, compression="gzip", engine='pyarrow')
