@@ -16,14 +16,11 @@ $ python t5_generation.py --retriever [insert retriever name] --k_retrievals [1 
 
 
 Adam:
-neo tfidf, bm25, bert_cls
-
+all k=2
 
 Andreas:
-neo bert_max, bert_mean
+all k=3
 
-baseline models for both (k=0)
-
-
-Asger: all T5 combinations
+Asger:
+all k=1
 
