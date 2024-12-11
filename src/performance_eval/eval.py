@@ -35,7 +35,7 @@ def main(args):
 
     # comparison plot
     if args.comparison_plot:
-        comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot)
+        comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot, retriever_order=args.retriever_order)
     
     # save the results to a csv file if specified
     if args.save_results:
@@ -58,7 +58,9 @@ if __name__ == "__main__":
                         help='List of metrics to plot (e.g., BLEU ROUGE-1 ROUGE-2 ROUGE-L METEOR)')
     parser.add_argument('--titles', nargs='+',
                         help='Custom titles for the plots')
-
+    parser.add_argument('--retriever-order', nargs='+',
+                        help='Order of retrievers in the comparison plot')
+    
     
     args = parser.parse_args()
     main(args)
