@@ -12,10 +12,6 @@ with open(file_path, "rb") as f:
 # converting list columns back to list columns as they are loaded as strings
 columns_to_convert = ['tf_idf', 'bm25', 'dense_cls', 'dense_max', 'dense_mean']
 
-for col in columns_to_convert:
-    dev_set[col] = dev_set[col].apply(ast.literal_eval)
-
-
 # load the model and tokenizer
 MODEL_NAME = "KennethTM/gpt-neo-1.3B-danish"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
