@@ -71,7 +71,7 @@ def evaluate_answers(model_answers_list, gold_answers):
         }
     return results
 
-def plot_model_scores(results, metrics=None, titles=None):
+def plot_model_scores(results, metrics=None, titles=None, save_path=None):
 
     # if metrics is None, use all available metrics
     if metrics is None:
@@ -106,4 +106,10 @@ def plot_model_scores(results, metrics=None, titles=None):
         axes[idx].set_visible(False)
 
     plt.tight_layout()
-    plt.show()
+    
+    if save_path:
+        plt.savefig(save_path)
+    else:
+        plt.show()
+    
+    return fig
