@@ -7,6 +7,25 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from rank_bm25 import BM25Okapi
 import torch
 
+def replace_nbsp(obj):
+    """
+    Recursively replaces non-breaking space characters (\xa0) with regular spaces
+    in strings within nested data structures.
+    
+    Args:
+        obj: Input object which can be a dictionary, list, string or other type
+        
+    Returns:
+        Object of same structure as input but with \xa0 replaced with spaces in all strings
+    """
+    if isinstance(obj, dict):
+        return {k: replace_nbsp(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [replace_nbsp(i) for i in obj]
+    elif isinstance(obj, str):
+        return obj.replace('\xa0', ' ')
+    else:
+        return obj
 
 def generate_rag_list(input_file, output_file):
     """
@@ -39,6 +58,8 @@ def generate_rag_list(input_file, output_file):
                     temp_paragraf_list.append(styk['tekst'])
                 temp_paragraf_dict['text'] = ' '.join(temp_paragraf_list)
                 rag_list.append(temp_paragraf_dict)
+
+    rag_list = replace_nbsp(rag_list)
 
     with open(output_file, "w") as file:
         for item in rag_list:

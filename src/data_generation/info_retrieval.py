@@ -19,8 +19,7 @@ from transformers import (
     pipeline
 )
 
-from utils.data_functions import *
-
+from data_functions import *
 
 # load the devset for evaluation
 devset = pd.read_csv("data/dev_set.csv").astype(str)
@@ -66,4 +65,4 @@ devset['bert_mean_context'] = devset['question'].apply(lambda x: dense_retrieval
                                                                                  pooling='mean'))
 
 # save the devset with the contexts
-devset.to_csv("data/devset_with_contexts.csv", index=False)
+devset.to_csv("output/devset/devset_with_contexts.csv", index=False)
