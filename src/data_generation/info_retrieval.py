@@ -25,7 +25,7 @@ from data_functions import *
 devset = pd.read_csv("data/dev_set.csv").astype(str)
 
 # generate the RAG list, i.e. the legal documents to be used for retrieval
-paragraphs = generate_paragraphs("data/domsdatabasen.retsinformation_newer.json", "data/rag_list.csv")
+paragraphs = generate_paragraphs("data/domsdatabasen.retsinformation_newer.json")
 
 # TF-IDF - get the vectorizer and tfidf matrix, then get context for each question (top 3 paragraphs)
 vectorizer, tfidf_matrix = tfidf_vectorizer(paragraphs)

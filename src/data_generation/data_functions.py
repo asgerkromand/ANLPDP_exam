@@ -66,7 +66,7 @@ def generate_rag_list(input_file, output_file):
             file.write(f"{item}\n")
     return rag_list
 
-def generate_paragraphs(input_file, output_file):
+def generate_paragraphs(input_file):
     """
     Generates a list of dictionaries containing paragraph information from legal documents.
     
