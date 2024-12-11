@@ -25,14 +25,14 @@ from data_functions import *
 devset = pd.read_csv("data/dev_set.csv").astype(str)
 
 # generate the RAG list, i.e. the legal documents to be used for retrieval
-rag_list = generate_rag_list("data/domsdatabasen.retsinformation_newer.json", "data/rag_list.csv")
+paragraphs = generate_paragraphs("data/domsdatabasen.retsinformation_newer.json", "data/rag_list.csv")
 
 # TF-IDF - get the vectorizer and tfidf matrix, then get context for each question (top 3 paragraphs)
-vectorizer, tfidf_matrix = tfidf_vectorizer(rag_list)
-devset['tfidf_context'] = devset['question'].apply(lambda x: tfidf_retrieval(x, tfidf_matrix, rag_list, vectorizer))
+vectorizer, tfidf_matrix = tfidf_vectorizer(paragraphs)
+devset['tfidf_context'] = devset['question'].apply(lambda x: tfidf_retrieval(x, tfidf_matrix, paragraphs, vectorizer))
 
 # BM25 - get the bm25 model and the corpus, then get context for each question (top 3 paragraphs)
-bm25_model, corpus = bm25_vectorizer(rag_list)
+bm25_model, corpus = bm25_vectorizer(paragraphs)
 devset['bm25_context'] = devset['question'].apply(lambda x: bm25_retrieval(x, bm25_model, corpus))
 
 # load the bert tokenizer and model
@@ -45,21 +45,21 @@ cls_embeddings, max_embeddings, mean_embeddings = load_embeddings()
 # get context for each question (top 3 paragraphs)
 devset['bert_cls_context'] = devset['question'].apply(lambda x: dense_retrieval(question=x, 
                                                                                 embeddings=cls_embeddings, 
-                                                                                corpus=rag_list, 
+                                                                                corpus=paragraphs, 
                                                                                 tokenizer=bert_tokenizer, 
                                                                                 model=bert_model, 
                                                                                 pooling='cls'))
 
 devset['bert_max_context'] = devset['question'].apply(lambda x: dense_retrieval(question=x, 
                                                                                 embeddings=max_embeddings, 
-                                                                                corpus=rag_list, 
+                                                                                corpus=paragraphs, 
                                                                                 tokenizer=bert_tokenizer, 
                                                                                 model=bert_model, 
                                                                                 pooling='max'))
 
 devset['bert_mean_context'] = devset['question'].apply(lambda x: dense_retrieval(question=x, 
                                                                                  embeddings=mean_embeddings, 
-                                                                                 corpus=rag_list, 
+                                                                                 corpus=paragraphs, 
                                                                                  tokenizer=bert_tokenizer, 
                                                                                  model=bert_model, 
                                                                                  pooling='mean'))
