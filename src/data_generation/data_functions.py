@@ -230,9 +230,9 @@ def load_embeddings():
         max_embeddings: Max pooled embeddings  
         mean_embeddings: Mean pooled embeddings
     """
-    cls_embeddings = torch.load('output/embeddings/cls_embeddings_DanskBERT.pt')
-    max_embeddings = torch.load('output/embeddings/max_embeddings_DanskBERT.pt')
-    mean_embeddings = torch.load('output/embeddings/mean_embeddings_DanskBERT.pt')
+    cls_embeddings = torch.load('../../output/embeddings/cls_embeddings_DanskBERT.pt')
+    max_embeddings = torch.load('../..output/embeddings/max_embeddings_DanskBERT.pt')
+    mean_embeddings = torch.load('../..output/embeddings/mean_embeddings_DanskBERT.pt')
     return cls_embeddings, max_embeddings, mean_embeddings
 
 def dense_retrieval(question, embeddings, corpus, tokenizer, model, pooling='cls', k=3):
