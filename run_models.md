@@ -38,14 +38,14 @@ Commands:
 ```
 python neo_generation.py --retriever tfidf --k_retrievals 2 (done)
 python neo_generation.py --retriever bm25 --k_retrievals 2 (done)
-python neo_generation.py --retriever bert_cls --k_retrievals 2
-python neo_generation.py --retriever bert_mean --k_retrievals 2
-python neo_generation.py --retriever bert_max --k_retrievals 2
-python t5_generation.py --retriever tfidf --k_retrievals 2
-python t5_generation.py --retriever bm25 --k_retrievals 2
-python t5_generation.py --retriever bert_cls --k_retrievals 2
-python t5_generation.py --retriever bert_mean --k_retrievals 2
-python t5_generation.py --retriever bert_max --k_retrievals 2
+python neo_generation.py --retriever bert_cls --k_retrievals 2 (done)
+python neo_generation.py --retriever bert_mean --k_retrievals 2 (done)
+python neo_generation.py --retriever bert_max --k_retrievals 2 (done)
+python t5_generation.py --retriever tfidf --k_retrievals 2 (done)
+python t5_generation.py --retriever bm25 --k_retrievals 2 (done)
+python t5_generation.py --retriever bert_cls --k_retrievals 2 (done)
+python t5_generation.py --retriever bert_mean --k_retrievals 2 (done)
+python t5_generation.py --retriever bert_max --k_retrievals 2 (done)
 ```
 
 Andreas:
