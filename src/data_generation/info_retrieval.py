@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import (
     AutoModel,
     AutoTokenizer, 
@@ -7,7 +6,6 @@ from transformers import (
 
 from data_functions import *
 import argparse
-from tqdm import tqdm
 import os
 
 def main():
