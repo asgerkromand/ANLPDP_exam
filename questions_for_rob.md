@@ -17,3 +17,10 @@ ikke spaces i den til T5. De skal vel være identiske for sammenlignelighed?
 - Group contributions:
   - Hvordan deler man det op på ITU?
   - Er der en mulighed for at angive at man har lavet alt sammen.
+
+
+# Takeaways
+
+- Use model with the correct paragraphs as upper bound
+- Check if the cls-token has actually been trained for DanskBERT (usually with next sentence prediction, could be that they masked it)
+- We need to motivate why we're using the greedy approach, computation and legal stuff
