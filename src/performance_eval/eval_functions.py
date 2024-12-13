@@ -117,43 +117,6 @@ def plot_model_scores(results, metrics=None, titles=None, save_path=None):
     
     return fig
 
-def comparison_plot_old(results, metrics=None, titles=None, save_path=None, figsize=(15, 12)):
- 
-    # set up plot (5 rows)
-    fig, axes = plt.subplots(5, 1, figsize=figsize)
-    axes = axes.ravel()
-
-    # get unique model names after stripping _k1, _k2, _k3
-    model_names = list(set(model.replace('_k1', '').replace('_k2', '').replace('_k3', '') for model in results.keys()))
-
-    # y axis max value
-    max_value = max(max(scores.values()) for scores in results.values())
-
-    # Plot each model type in its own panel with all k configurations
-    for idx, model in enumerate(model_names):
-        ax = axes[idx]
-        x_positions = np.arange(len(results[f'{model}_k1'].keys()))
-        width = 0.25  # Width of bars
-        
-        # Plot bars for each k value side by side
-        ax.bar(x_positions - width, results[f'{model}_k1'].values(), width, label='p=1')
-        ax.bar(x_positions, results[f'{model}_k2'].values(), width, label='p=2')
-        ax.bar(x_positions + width, results[f'{model}_k3'].values(), width, label='p=3')
-        
-        ax.set_title(f'{model}')
-        ax.set_xticks(x_positions)
-        ax.set_xticklabels(results[f'{model}_k1'].keys())
-        ax.tick_params(axis='x')
-        ax.set_ylim(0, max_value * 1.1)
-        ax.legend()
-
-    plt.tight_layout()
-    if save_path:
-        plt.savefig(save_path)
-    else:
-        plt.show()
-    return fig
-
 def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=(12, 12), retriever_order=None):
  
     # set up plot (5 rows, 2 columns)
@@ -162,6 +125,11 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
     # first, the two baselines are called t5_gen_baseline and neo_gen_baseline
     t5_baseline = results["t5_gen_baseline"]
     neo_baseline = results["neo_gen_baseline"]
+
+    # Filter metrics if specified
+    if metrics is not None:
+        t5_baseline = {k: v for k, v in t5_baseline.items() if k in metrics}
+        neo_baseline = {k: v for k, v in neo_baseline.items() if k in metrics}
 
     # get unique retriever names after stripping _k1, _k2, _k3 and model type prefix
     retriever_names = list(set(model.replace('_k1', '').replace('_k2', '').replace('_k3', '').replace('t5_gen_', '').replace('neo_gen_', '') for model in results.keys()))
@@ -175,6 +143,15 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
         if set(retriever_order) != set(retriever_names):
             raise ValueError("retriever_order must contain all and only the retriever names present in results")
         retriever_names = retriever_order
+
+    # Filter results based on specified metrics
+    filtered_results = {}
+    for model, scores in results.items():
+        if metrics is not None:
+            filtered_results[model] = {k: v for k, v in scores.items() if k in metrics}
+        else:
+            filtered_results[model] = scores
+    results = filtered_results
 
     # y axis max value
     max_value = max(max(scores.values()) for scores in results.values())
