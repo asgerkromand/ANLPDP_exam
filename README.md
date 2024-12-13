@@ -28,6 +28,10 @@ Of particular note this source code relies on the following dependencies:
 
 No installation needed. Please create a fork to be able to run the code.
 
+## Data use in this exam
+
+Skriv noget om hvordan vi bruger data, skriv noget om det data vi har genereret. 
+
 ## Usage
 
 To reproduce this study the src codes has been provided which consists of a mix of scripts and code. Below we will provide examples of all the python commandline prompts which are needed to be able to reproduce the coding part of our exam study.
@@ -43,11 +47,20 @@ The codebase can be divided into three parts. Info on initial input data will be
 Code:
 
 - ```data_functions.py```
-  - Functions to generate the sparse and dense matrices for the information retrieval.
+  - Functions to load in data and generate a list of paragraphs.
+  - Functions to preprocess and tokenize paragraphs, and afterwards generate the sparse and dense matrices for the information retrieval (IR).
 - ```generation_embeddings.py```
   - Functions to generate and save BERT embeddings with different pooling (*CLS*, *Max-pooling*, *Mean-pooling*)
-- ```ìnfo_retrieval.py```
-  - fdjkjkl
+  - Input: List of context documents, e.g. paragraphs
+  - Output: BERT embeddings with three different poolings.
+- ```info_retrieval.py```
+  - Script to perform information retrieval (IR) on the paragraphs based on sparse and dense retrieval:
+    - *Sparse:* TF-IDF, BM25
+    - *Dense:* BERT CLS-pooling, BERT Max-pooling, BERT Mean-pooling
+
+### Model inference
+
+### Performance evaluation
 
 ## Additional Documentation and Acknowledgments
 
