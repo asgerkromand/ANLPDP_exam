@@ -1,6 +1,9 @@
 # Questions
 
 - Spørg om Readme. Nævn og scripts og yaml
+- EOS-token == ' Spørgsmål', er det no-no?
+- Vi har opdaget at de har identiske prompts bortset fra at der er newlines og 
+ikke spaces i den til T5. De skal vel være identiske for sammenlignelighed?
 - Formler
   - Udover ved retrieval, er der så nogle der er oplagte
   - F.eks. rogue, bleu.
