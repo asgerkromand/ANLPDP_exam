@@ -18,11 +18,11 @@ To replicate this study, you are more than welcome to make fork.
 
 Of particular note this source code relies on the following dependencies:
 
-- pytorch ([github link](https://github.com/pytorch/pytorch))
-- NLTK (Natural Language Toolkit, [github link](https://github.com/nltk/nltk))
-- sklearn (TF-IDF vectorizer, ([github link](https://github.com/scikit-learn/scikit-learn))
-- rank_bm25 (BM25 model, [github link](https://github.com/dorianbrown/rank_bm25))
-- Transformers ([github link](https://github.com/huggingface/transformers)) 
+- pytorch ([github link](https://github.com/pytorch/pytorch)).
+- NLTK (Natural Language Toolkit, [github link](https://github.com/nltk/nltk)).
+- sklearn (TF-IDF vectorizer, ([github link](https://github.com/scikit-learn/scikit-learn)).
+- rank_bm25 (BM25 model, [github link](https://github.com/dorianbrown/rank_bm25)).
+- Transformers ([github link](https://github.com/huggingface/transformers)).
 
 ### Installation
 
@@ -30,7 +30,7 @@ No installation needed. Please create a fork to be able to run the code.
 
 ## Data use in this exam
 
-Skriv noget om hvordan vi bruger data, skriv noget om det data vi har genereret. 
+***Skriv noget om hvordan vi bruger data, skriv noget om det data vi har genereret.***
 
 ## Usage
 
@@ -50,21 +50,49 @@ Code:
   - Functions to load in data and generate a list of paragraphs.
   - Functions to preprocess and tokenize paragraphs, and afterwards generate the sparse and dense matrices for the information retrieval (IR).
 - ```generation_embeddings.py```
-  - Functions to generate and save BERT embeddings with different pooling (*CLS*, *Max-pooling*, *Mean-pooling*)
-  - Input: List of context documents, e.g. paragraphs
+  - Script with to generate and save BERT embeddings with different pooling (*CLS*, *Max-pooling*, *Mean-pooling*).
+  - Input: List of context documents, e.g. paragraphs.
   - Output: BERT embeddings with three different poolings.
 - ```info_retrieval.py```
   - Script to perform information retrieval (IR) on the paragraphs based on sparse and dense retrieval:
-    - *Sparse:* TF-IDF, BM25
-    - *Dense:* BERT CLS-pooling, BERT Max-pooling, BERT Mean-pooling
+    - *Sparse:* TF-IDF, BM25.
+    - *Dense:* BERT CLS-pooling, BERT Max-pooling, BERT Mean-pooling.
+  - Input: data/dev_set.csv, domsdatabasen.retsinformation_newer.json
+  - Output: output/devset/devset_with_contexts_parquet.gzip
+
+Running the code:
 
 ### Model inference
 
+Code:
+
+- ```neo_generation.py```
+  - Script to generate answers to legal questions with the ```GPT-Neo Danish```-model aided by RAG done by the five different IR-systems.
+- ```neo_generation_baseline.py```
+  - Script to generate answers to legal questions with the ```GPT-Neo Danish```-model without RAG.
+- ```t5_generation_baseline.py```
+  - Script to generate answers to legal questions with the ```DanT5 Large```-model aided by RAG done by the five different IR-systems.
+- ```t5_generation_baseline.py```
+  - Script to generate the answers to legal questions with the ```DanT5 Large```-model without RAG.
+
+Input (all scripts): Development dataset with retrieved paragrapghs aka. concext (output/devset_with_contexts.parquet.gzip)
+Output (all scripts): Inferred outputs for the models T5 and GPT with variyng configurations.
+
+Running the code:
+
 ### Performance evaluation
+
+Code:
+
+- ```eval_functions.py```
+  - Functions to calculate and plotting the plot.
+- ```eval.py```
+  - Script to compute and produce the performance results and plots.
+  - Input: data/dev_set.csv
+  - Output: output/plots
+
+Running the code:
 
 ## Additional Documentation and Acknowledgments
 
-* Project folder on server:
-* Confluence link:
-* Asana board:
-* etc...
+Tak til ham manden der gav os data og vejledning fra Rob. Tak til Copilot.
