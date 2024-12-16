@@ -71,7 +71,7 @@ if __name__ == "__main__":
     with open(file_path, "rb") as f:
         dev_set = pd.read_parquet(f)
     
-    # Open the file in read mode
+    # load random context
     with open("../../random_context.json", "r") as load_file:
         random_context = json.load(load_file)
 
