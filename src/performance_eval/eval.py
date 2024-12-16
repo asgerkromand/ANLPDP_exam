@@ -48,15 +48,15 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Evaluate model answers against gold answers')
     
-    parser.add_argument('--gold-answers', type=str, default="data/dev_set.csv",
+    parser.add_argument('gold-answers', type=str, default="data/dev_set.csv",
                         help='Path to CSV file containing gold answers')
-    parser.add_argument('--inference-dir', type=str, default="output/inference",
+    parser.add_argument('inference-dir', type=str, default="output/inference",
                         help='Directory containing model inference output files')
-    parser.add_argument('--comparison-plot', type=str,
+    parser.add_argument('comparison-plot', type=str,
                         help='Path to save comparison plot image')
-    parser.add_argument('--save-results', type=str,
+    parser.add_argument('save-results', type=str,
                         help='Path to save evaluation results LaTeX')
-    parser.add_argument('--metrics', nargs='+', 
+    parser.add_argument('metrics', nargs='+', 
                         help='List of metrics to plot (e.g., BLEU ROUGE-1 ROUGE-2 ROUGE-L METEOR)')
     parser.add_argument('--titles', nargs='+',
                         help='Custom titles for the plots')
