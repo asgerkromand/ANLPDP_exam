@@ -117,10 +117,31 @@ def plot_model_scores(results, metrics=None, titles=None, save_path=None):
     
     return fig
 
-def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=(12, 12), retriever_order=None):
+def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=(12, 8), retriever_order=None, retrievers=None):
  
-    # set up plot (5 rows, 2 columns)
-    fig, axes = plt.subplots(5, 2, figsize=figsize)
+    # get unique retriever names after stripping _k1, _k2, _k3 and model type prefix
+    retriever_names = list(set(model.replace('_k1', '').replace('_k2', '').replace('_k3', '').replace('t5_gen_', '').replace('neo_gen_', '') for model in results.keys()))
+    
+    # remove the baselines and upper bounds from the retriever names
+    retriever_names = [name for name in retriever_names if name not in ["baseline", "upper_bound"]]
+
+    # Filter retrievers if specified
+    if retrievers is not None:
+        # Verify specified retrievers exist
+        invalid_retrievers = set(retrievers) - set(retriever_names)
+        if invalid_retrievers:
+            raise ValueError(f"Invalid retrievers specified: {invalid_retrievers}")
+        retriever_names = [r for r in retriever_names if r in retrievers]
+
+    # Sort retrievers if order is provided
+    if retriever_order is not None:
+        # Verify all retrievers are present
+        if set(retriever_order) != set(retriever_names):
+            raise ValueError("retriever_order must contain all and only the retriever names present in results")
+        retriever_names = retriever_order
+
+    # there are two files called "t5_gen_random_contexts.txt" and "neo_gen_random_contexts.txt" - we want to ignore these
+    results = {k: v for k, v in results.items() if k not in ["t5_gen_random_contexts", "neo_gen_random_contexts"]}
 
     # get baselines and upper bounds
     t5_baseline = results["t5_gen_baseline"]
@@ -135,19 +156,6 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
         t5_upper = {k: v for k, v in t5_upper.items() if k in metrics}
         neo_upper = {k: v for k, v in neo_upper.items() if k in metrics}
 
-    # get unique retriever names after stripping _k1, _k2, _k3 and model type prefix
-    retriever_names = list(set(model.replace('_k1', '').replace('_k2', '').replace('_k3', '').replace('t5_gen_', '').replace('neo_gen_', '') for model in results.keys()))
-    
-    # remove the baselines and upper bounds from the retriever names
-    retriever_names = [name for name in retriever_names if name not in ["baseline", "upper_bound"]]
-
-    # Sort retrievers if order is provided, otherwise use default order
-    if retriever_order is not None:
-        # Verify all retrievers are present
-        if set(retriever_order) != set(retriever_names):
-            raise ValueError("retriever_order must contain all and only the retriever names present in results")
-        retriever_names = retriever_order
-
     # Filter results based on specified metrics
     filtered_results = {}
     for model, scores in results.items():
@@ -160,12 +168,22 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
     # y axis max value
     max_value = max(max(scores.values()) for scores in results.values())
 
+    # set up plot (n_retrievers rows, 2 columns)
+    n_retrievers = len(retriever_names)
+    fig, axes = plt.subplots(n_retrievers, 2, figsize=figsize)
+    if n_retrievers == 1:
+        axes = axes.reshape(1, 2)
+
     # Add titles to the top plots
     axes[0,0].set_title("T5 Models")
     axes[0,1].set_title("Neo Models")
 
     # Create hatch pattern for upper bounds
     hatch_pattern = '//'
+
+    # Define color shades for bars
+    t5_colors = ['#1f77b4', '#4e97d1', '#7fb7ee', '#afd7ff', '#d4e8ff']  # Blue shades
+    neo_colors = ['#1f77b4', '#4e97d1', '#7fb7ee', '#afd7ff', '#d4e8ff']  # Same blue shades
 
     # Plot each model type in its own panel with all k configurations
     for idx, retriever in enumerate(retriever_names):
@@ -177,10 +195,10 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
         
         # Plot bars for each k value side by side
         ax_t5.bar(x_positions - 2*width, t5_upper.values(), width, label='p*', color='white', edgecolor='black', hatch=hatch_pattern, alpha=0.5)
-        ax_t5.bar(x_positions - width, t5_baseline.values(), width, label='p=0')
-        ax_t5.bar(x_positions, results[f'{model}_k1'].values(), width, label='p=1')
-        ax_t5.bar(x_positions + width, results[f'{model}_k2'].values(), width, label='p=2')
-        ax_t5.bar(x_positions + 2*width, results[f'{model}_k3'].values(), width, label='p=3')
+        ax_t5.bar(x_positions - width, t5_baseline.values(), width, label='p=0', color=t5_colors[1])
+        ax_t5.bar(x_positions, results[f'{model}_k1'].values(), width, label='p=1', color=t5_colors[2])
+        ax_t5.bar(x_positions + width, results[f'{model}_k2'].values(), width, label='p=2', color=t5_colors[3])
+        ax_t5.bar(x_positions + 2*width, results[f'{model}_k3'].values(), width, label='p=3', color=t5_colors[4])
         
         ax_t5.set_ylabel(retriever)
         if idx == len(retriever_names) - 1:
@@ -189,6 +207,7 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
         else:
             ax_t5.set_xticks([])
         ax_t5.set_ylim(0, max_value * 1.1)
+        ax_t5.grid(axis='y', linestyle='--', alpha=0.3)
         if idx == 0:  # Only show legend for first plot
             ax_t5.legend()
 
@@ -198,10 +217,10 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
         
         # Plot bars for each k value side by side
         ax_neo.bar(x_positions - 2*width, neo_upper.values(), width, label='p*', color='white', edgecolor='black', hatch=hatch_pattern, alpha=0.5)
-        ax_neo.bar(x_positions - width, neo_baseline.values(), width, label='p=0')
-        ax_neo.bar(x_positions, results[f'{model}_k1'].values(), width, label='p=1')
-        ax_neo.bar(x_positions + width, results[f'{model}_k2'].values(), width, label='p=2')
-        ax_neo.bar(x_positions + 2*width, results[f'{model}_k3'].values(), width, label='p=3')
+        ax_neo.bar(x_positions - width, neo_baseline.values(), width, label='p=0', color=neo_colors[1])
+        ax_neo.bar(x_positions, results[f'{model}_k1'].values(), width, label='p=1', color=neo_colors[2])
+        ax_neo.bar(x_positions + width, results[f'{model}_k2'].values(), width, label='p=2', color=neo_colors[3])
+        ax_neo.bar(x_positions + 2*width, results[f'{model}_k3'].values(), width, label='p=3', color=neo_colors[4])
         
         if idx == len(retriever_names) - 1:
             ax_neo.set_xticks(x_positions)
@@ -210,10 +229,11 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
             ax_neo.set_xticks([])
         ax_neo.set_ylim(0, max_value * 1.1)
         ax_neo.set_yticklabels([])
+        ax_neo.grid(axis='y', linestyle='--', alpha=0.3)
 
     plt.tight_layout()
     if save_path:
-        plt.savefig(save_path)
+        plt.savefig(save_path, format='svg')
     else:
         plt.show()
     return fig

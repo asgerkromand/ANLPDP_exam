@@ -35,12 +35,14 @@ def main(args):
 
     # comparison plot
     if args.comparison_plot:
-        comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot, retriever_order=args.retriever_order)
+        comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot, retriever_order=args.retriever_order, retrievers=args.retrievers)
     
     # save the results to a csv file if specified
     if args.save_results:
         results_df = pd.DataFrame(results)
-        results_df.to_csv(args.save_results, index=False)
+        results_df = results_df.reindex(sorted(results_df.columns), axis=1)
+        results_df = results_df.drop(columns=['neo_gen_random_context', 't5_gen_random_context'])
+        results_df.to_latex(args.save_results.replace('.csv', '.tex'), index=False)
 
 if __name__ == "__main__":
     import argparse
@@ -53,14 +55,15 @@ if __name__ == "__main__":
     parser.add_argument('--comparison-plot', type=str,
                         help='Path to save comparison plot image')
     parser.add_argument('--save-results', type=str,
-                        help='Path to save evaluation results CSV')
+                        help='Path to save evaluation results LaTeX')
     parser.add_argument('--metrics', nargs='+', 
                         help='List of metrics to plot (e.g., BLEU ROUGE-1 ROUGE-2 ROUGE-L METEOR)')
     parser.add_argument('--titles', nargs='+',
                         help='Custom titles for the plots')
     parser.add_argument('--retriever-order', nargs='+',
                         help='Order of retrievers in the comparison plot')
-    
+    parser.add_argument('--retrievers', nargs='+',
+                        help='List of retrievers to include in the comparison plot')
     
     args = parser.parse_args()
     main(args)
