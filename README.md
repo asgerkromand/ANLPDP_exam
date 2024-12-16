@@ -12,7 +12,7 @@ The data is retrieved from The Danish Legal Information Portal (retsinformation.
 
 ## Getting Started
 
-To replicate this study, you are more than welcome to make fork.
+To replicate this study, you are more invited to make fork.
 
 ### Prerequisites
 
@@ -30,7 +30,7 @@ No installation needed. Create a fork to be able to run the code.
 
 ## Data
 
-For the task of legal question answering, we have obtained a dataset of all applicable Danish laws with the oldest dating back to 1865 from Mads Henrichsen (founder of [Dansk GPT](https://www.danskgpt.dk/)). These 1637 laws have been collected from The Danish Legal Information Portal (\url{retsinformation.dk}). Each law is structured such that it consists of a number of chapters, which in turn contain the related paragraphs with subsections. In this project, our level of analysis is on the paragraphs, and our corpus consists of a list of $42,593$ paragraphs with a mean length of $\approx656$ characters.
+For the task of legal question answering, we have obtained a dataset of all applicable Danish laws with the oldest dating back to 1865 from Mads Henrichsen (founder of [Dansk GPT](https://www.danskgpt.dk/)). These 1637 laws have been collected from The Danish Legal Information Portal (https://www.retsinformation.dk/). Each law is structured such that it consists of a number of chapters, which in turn contain the related paragraphs with subsections. In this project, our level of analysis is on the paragraphs, and our corpus consists of a list of $42,593$ paragraphs with a mean length of $\approx656$ characters.
 
 Only a test subset have been provided in this repo to be able to run the code due to storage constraints. Please write an email to [Adam Wagner Hoegh](mailto:wagnerhoegh.adam@gmail.com) to obtain the full dataset.
 
@@ -62,7 +62,7 @@ The codebase can be divided into three parts:
   - Input: ```data/dev_set.csv```, ```domsdatabasen.retsinformation_newer.json```
   - Output: ```output/devset/devset_with_contexts_parquet.gzip```
 
-#### Run in terminal (example)
+#### Run in terminal
 
 **Generate embeddings with CLS pooling method:**
 
@@ -104,7 +104,7 @@ python info_retrieval.py ../../data/dev_set.csv law_data_path ../../output/devse
 Input (all scripts): Development dataset with retrieved paragrapghs aka. concext (output/devset_with_contexts.parquet.gzip)
 Output (all scripts): Inferred outputs for the models T5 and GPT with variyng configurations.
 
-#### Run in terminal (example)
+#### Run in terminal
 
 Generate the answers based on NeoGPT and T5. To run the code locally, this will require approx 7-8 hours depending in your computer. To run all models with all configurations as in this project, you can run below shell script, by changing the path. Beware that the code was run on Mac M2 and M3 with 16MB ram.
 
@@ -129,20 +129,18 @@ chmod +x run_models.sh
   - Input: data/dev_set.csv
   - Output: output/plots
 
-#### Run in terminal (example)
+#### Run in terminal
 
 **Evaluating the models with different configurations:**
 
 ```[python]
-python eval.py <gold_answers> <inference-dir> [--comparison-plot] <save-results> <metrics> [--titles <titles>] [--retrieve_order] [--retrievers]
+python eval.py [--gold_answers <gold_answers> (default: ../../data/dev_set.csv)] [--inference-dir <inference-dir> (default: ../../output/inference)] <comparison-plot> <save-results> <metrics> [--titles <titles>] [--retrieve_order] [--retrievers]
 ```
 
 *Example:*
 
-***MANGLER et eksempel til nedenfor***
-
 ```
-python eval.py ../../data/dev_set.csv ../../output/inference . . BLEU ROUGE-L METEOR  [--retrieve_order] [--retrievers]
+python eval.py --comparison-plot results.svg --save-results results.tex --metrics BLEU ROUGE-L METEOR --retriever-order "tfidf" "bm25" "bert_cls" --retrievers "tfidf" "bm25" "bert_cls"
 ```
 
 ## Acknowledgments
