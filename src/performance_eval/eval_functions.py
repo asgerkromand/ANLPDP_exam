@@ -182,8 +182,8 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
     hatch_pattern = '//'
 
     # Define color shades for bars
-    t5_colors = ['#1f77b4', '#4e97d1', '#7fb7ee', '#afd7ff', '#d4e8ff']  # Blue shades
-    neo_colors = ['#1f77b4', '#4e97d1', '#7fb7ee', '#afd7ff', '#d4e8ff']  # Same blue shades
+    t5_colors = ['#08306b', '#2171b5', '#4292c6', '#6baed6', '#9ecae1']  # Different blue shades from dark to light
+    neo_colors = ['#08306b', '#2171b5', '#4292c6', '#6baed6', '#9ecae1']  # Same blue shades
 
     # Plot each model type in its own panel with all k configurations
     for idx, retriever in enumerate(retriever_names):
