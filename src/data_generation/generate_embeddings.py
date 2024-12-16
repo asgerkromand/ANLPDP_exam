@@ -1,9 +1,10 @@
 import argparse
-import json
 import torch
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
+
+from data_functions import generate_paragraphs 
 
 def create_embeddings_matrix(
     text_list,
@@ -89,11 +90,6 @@ def save_tensor(tensor, output_path, pooling_method='CLS'):
     torch.save(tensor, output_path)
     print(f"Embeddings saved to {output_path}")
 
-def load_text_list(input_path):
-    """Load a list of dictionaries with 'text' keys from a JSONL file."""
-    with open(input_path, 'r', encoding='utf-8') as f:
-        return [json.loads(line) for line in f]
-
 def main():
     parser = argparse.ArgumentParser(description="Generate embeddings from a list of texts.")
     parser.add_argument("input_path", type=str, help="Path to the input JSONL file containing text data.")
@@ -106,7 +102,7 @@ def main():
 
     # Load input data
     print(f"Loading text data from {args.input_path}")
-    text_list = load_text_list(args.input_path)
+    text_list = generate_paragraphs(args.input_path)
 
     # Generate embeddings
     print("Generating embeddings...")

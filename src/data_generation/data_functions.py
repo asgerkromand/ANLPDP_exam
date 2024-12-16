@@ -72,7 +72,6 @@ def generate_paragraphs(input_file):
     
     Args:
         input_file: Path to input JSON file containing legal document data
-        output_file: Path to output file to write the processed data
         
     Returns:
         rag_list: List of dictionaries, where each dictionary contains:

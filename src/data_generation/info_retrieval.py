@@ -12,13 +12,13 @@ def main():
     # Load in filepaths
     parser = argparse.ArgumentParser()
     parser.add_argument("devset_path", type=str, help="Path to the devset file") # data/dev_set.csv
-    parser.add_argument("paragraphs_path", type=str, help="Path to the paragraphs file") # data/domsdatabasen.retsinformation_newer.json
+    parser.add_argument("law_data_path", type=str, help="Path to the paragraphs file") # data/domsdatabasen.retsinformation_newer.json
     parser.add_argument("output_folder", type=str, help="Path to the output file") # output/devset
     args = parser.parse_args()
 
     # Assign the filepaths to variables
     devset_path = args.devset_path
-    paragraphs_path = args.paragraphs_path
+    paragraphs_path = args.law_data_path
     output_folder = args.output_folder
     # Check if the output folder exists, if not create it
     if not os.path.exists(output_folder):
