@@ -31,10 +31,7 @@ def main(args):
     model_names = list(model_answers.keys())
     results = evaluate_answers(model_answers_list, gold_answers, model_names)
     print("\nEvaluation Results:")
-    print(pd.DataFrame(results))
-    results = pd.DataFrame(results)
-    results = results.reindex(sorted(results.columns), axis=1)
-    results.to_latex(args.save_results.replace('.csv', '.tex'), index=False)
+    print(results)
     
     # comparison plot
     if args.comparison_plot:
@@ -49,7 +46,28 @@ def main(args):
         results_df = pd.DataFrame(results)
         results_df = results_df.reindex(sorted(results_df.columns), axis=1)
         results_df = results_df.drop(columns=['neo_gen_random_context', 't5_gen_random_context'])
-        results_df.to_latex(args.save_results.replace('.csv', '.tex'), index=False)
+        results_df.columns = results_df.columns.str.replace('gen_', '')
+        # Sort the columns into to dataframes based on being either Neo or T5
+        neo_cols = [col for col in results_df.columns if 'neo' in col]
+        t5_cols = [col for col in results_df.columns if 't5' in col]
+        neo_results = results_df[neo_cols]
+        t5_results = results_df[t5_cols]
+        # Remove neo and t5 from the column names
+        neo_results.columns = neo_results.columns.str.replace('neo_', '')
+        t5_results.columns = t5_results.columns.str.replace('t5_', '')
+        # Make sure that baseline and upper bound is the two first columns
+        neo_results = neo_results[['baseline', 'upper_bound'] + [col for col in neo_results.columns if col not in ['baseline', 'upper_bound']]]
+        t5_results = t5_results[['baseline', 'upper_bound'] + [col for col in t5_results.columns if col not in ['baseline', 'upper_bound']]]
+        # Save the results to a tex file with only two decimals
+        neo_results.to_latex(
+            f'{args.save_results}_neo.tex', 
+            index=True, 
+            float_format="%.2f") # Scores GPT-Neo 1.3B
+        t5_results.to_latex(
+            f'{args.save_results}_t5.tex', 
+            index=True, 
+            float_format="%.2f") # Scores DantT5-Large 770M
+        results_df.to_latex(args.save_results.replace('all.csv', '.tex'), index=True, float_format="%.2f")
 
 if __name__ == "__main__":
     import argparse

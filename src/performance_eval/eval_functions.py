@@ -45,7 +45,7 @@ def calculate_avg_scores(answers, gold_answers):
     bleu_scores = calculate_bleu(answers, gold_answers)
     rouge1_scores, rouge2_scores, rougeL_scores = calculate_rouge(answers, gold_answers)
     meteor_scores = calculate_meteor(answers, gold_answers)
-    return np.mean(bleu_scores), np.mean(rouge1_scores), np.mean(rouge2_scores), np.mean(rougeL_scores), np.mean(meteor_scores)
+    return round(np.mean(bleu_scores), 2), round(np.mean(rouge1_scores), 2), round(np.mean(rouge2_scores), 2), round(np.mean(rougeL_scores), 2), round(np.mean(meteor_scores), 2)
 
 # function to evalualate answers from different models
 def evaluate_answers(model_answers_list, gold_answers, model_names=None):
