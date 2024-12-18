@@ -32,11 +32,18 @@ def main(args):
     results = evaluate_answers(model_answers_list, gold_answers, model_names)
     print("\nEvaluation Results:")
     print(pd.DataFrame(results))
-
+    results = pd.DataFrame(results)
+    results = results.reindex(sorted(results.columns), axis=1)
+    results.to_latex(args.save_results.replace('.csv', '.tex'), index=False)
+    
     # comparison plot
     if args.comparison_plot:
         comparison_plot(results, metrics=args.metrics, titles=args.titles, save_path=args.comparison_plot, retriever_order=args.retriever_order, retrievers=args.retrievers)
-    
+
+    # cls plot
+    if args.cls_plot:
+        cls_plot(results, metrics=args.cls_metrics, save_path=args.cls_save_path)
+
     # save the results to a csv file if specified
     if args.save_results:
         results_df = pd.DataFrame(results)
@@ -48,22 +55,28 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Evaluate model answers against gold answers')
     
-    parser.add_argument('gold-answers', type=str, default="data/dev_set.csv",
+    parser.add_argument('--gold_answers', type=str, default="data/dev_set.csv",
                         help='Path to CSV file containing gold answers')
-    parser.add_argument('inference-dir', type=str, default="output/inference",
+    parser.add_argument('--inference_dir', type=str, default="output/inference",
                         help='Directory containing model inference output files')
-    parser.add_argument('comparison-plot', type=str,
+    parser.add_argument('--comparison_plot', type=str,
                         help='Path to save comparison plot image')
-    parser.add_argument('save-results', type=str,
+    parser.add_argument('--save_results', type=str,
                         help='Path to save evaluation results LaTeX')
-    parser.add_argument('metrics', nargs='+', 
+    parser.add_argument('--metrics', nargs='+', 
                         help='List of metrics to plot (e.g., BLEU ROUGE-1 ROUGE-2 ROUGE-L METEOR)')
     parser.add_argument('--titles', nargs='+',
                         help='Custom titles for the plots')
-    parser.add_argument('--retriever-order', nargs='+',
+    parser.add_argument('--retriever_order', nargs='+',
                         help='Order of retrievers in the comparison plot')
     parser.add_argument('--retrievers', nargs='+',
                         help='List of retrievers to include in the comparison plot')
+    parser.add_argument('--cls_plot', type=str,
+                        help='Path to save CLS plot image')
+    parser.add_argument('--cls_metrics', nargs='+',
+                        help='List of metrics to plot in CLS plot')
+    parser.add_argument('--cls_save_path', type=str,
+                        help='Path to save CLS plot image')
     
     args = parser.parse_args()
     main(args)

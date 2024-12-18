@@ -233,7 +233,74 @@ def comparison_plot(results, metrics=None, titles=None, save_path=None, figsize=
 
     plt.tight_layout()
     if save_path:
-        plt.savefig(save_path, format='svg')
+        plt.savefig(save_path, format='pdf')
     else:
         plt.show()
+    return fig
+
+def cls_plot(results, metrics=None, save_path=None, figsize=(12, 4)):
+    """
+    Creates a comparison plot between CLS-based retrieval and random context baseline
+    for both T5 and Neo models.
+    """
+    # Filter metrics if specified
+    if metrics is None:
+        metrics = list(next(iter(results.values())).keys())
+    
+    # Get relevant results
+    t5_cls = results["t5_gen_bert_cls_k1"]
+    t5_random = results["t5_gen_random_context"] # Fixed key name
+    neo_cls = results["neo_gen_bert_cls_k1"]
+    neo_random = results["neo_gen_random_context"] # Fixed key name
+
+    # Filter metrics
+    t5_cls = {k: v for k, v in t5_cls.items() if k in metrics}
+    t5_random = {k: v for k, v in t5_random.items() if k in metrics}
+    neo_cls = {k: v for k, v in neo_cls.items() if k in metrics}
+    neo_random = {k: v for k, v in neo_random.items() if k in metrics}
+
+    # Set up plot (1 row, 2 columns)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+
+    # Plot settings
+    x_positions = np.arange(len(metrics))
+    width = 0.35
+    colors = ['#2171b5', '#6baed6']  # Dark and light blue
+
+    # T5 plot
+    ax1.bar(x_positions - width/2, t5_cls.values(), width, label='CLS retrieval', color=colors[0])
+    ax1.bar(x_positions + width/2, t5_random.values(), width, label='Random retrieval', color=colors[1])
+    ax1.set_title("T5 Model")
+    ax1.set_xticks(x_positions)
+    ax1.set_xticklabels(metrics)
+    ax1.set_ylabel("Score")
+    ax1.legend()
+    ax1.grid(axis='y', linestyle='--', alpha=0.3)
+
+    # Neo plot
+    ax2.bar(x_positions - width/2, neo_cls.values(), width, color=colors[0])
+    ax2.bar(x_positions + width/2, neo_random.values(), width, color=colors[1])
+    ax2.set_title("Neo Model")
+    ax2.set_xticks(x_positions)
+    ax2.set_xticklabels(metrics)
+    ax2.grid(axis='y', linestyle='--', alpha=0.3)
+    ax2.set_yticklabels([])  # Remove y-axis labels for right plot
+
+    # Ensure same y-axis scale
+    max_value = max(
+        max(t5_cls.values()),
+        max(t5_random.values()),
+        max(neo_cls.values()),
+        max(neo_random.values())
+    )
+    ax1.set_ylim(0, max_value * 1.1)
+    ax2.set_ylim(0, max_value * 1.1)
+
+    plt.tight_layout()
+    
+    if save_path:
+        plt.savefig(save_path, format='pdf')
+    else:
+        plt.show()
+    
     return fig
