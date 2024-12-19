@@ -8,7 +8,7 @@ The project examines tests the performance of Retrieval Augmented Generation (RA
 and
 - ```KennethTM/gpt-neo-1.3B-danish``` (GPT model)
 
-The data is retrieved from The Danish Legal Information Portal (retsinformation.dk). The dataset contains all current laws dating back to 1840. It was provided to the project in a ```.json```format.
+The data is retrieved from The Danish Legal Information Portal (retsinformation.dk). The dataset contains all current laws dating back to 1865. It was provided to the project in a ```.json```format.
 
 ## Getting Started
 
