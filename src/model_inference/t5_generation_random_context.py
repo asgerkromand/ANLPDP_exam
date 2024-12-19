@@ -74,8 +74,10 @@ if __name__ == "__main__":
     with open("../../random_context.json", "r") as load_file:
         random_context = json.load(load_file)
 
+    # run function
     answers = generate_answers(k_retrievals)
 
+    # save results
     with open(f'../../output/inference/t5_gen_random_context.txt', 'w') as file:
         for answer in answers:
             file.write(answer + '\n')

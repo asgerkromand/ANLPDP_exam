@@ -65,8 +65,10 @@ if __name__ == "__main__":
     with open(file_path, "rb") as f:
         dev_set = pd.read_parquet(f)
 
+    # run function
     answers = generate_answers()
 
+    # save results
     with open(f'../../output/inference/neo_gen_upper_bound.txt', 'w') as file:
         for answer in answers:
             file.write(answer + '\n')

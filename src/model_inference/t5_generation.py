@@ -58,6 +58,7 @@ def generate_answers(retriever, k_retrievals):
 
 if __name__ == "__main__":
 
+    # add arguments
     import argparse
     parser = argparse.ArgumentParser(description="Set the 'strombergnlp/dant5-large")
     parser.add_argument("--retriever", type=str, help="Retrieval model (options: 'tfidf', 'bm25', 'bert_cls', 'bert_max' and 'bert_mean')")
@@ -72,8 +73,10 @@ if __name__ == "__main__":
     with open(file_path, "rb") as f:
         dev_set = pd.read_parquet(f)
 
+    # run function
     answers = generate_answers(retriever, k_retrievals)
 
+    # save results
     with open(f'../../output/inference/t5_gen_{retriever}_k{k_retrievals}.txt', 'w') as file:
         for answer in answers:
             file.write(answer + '\n')
