@@ -12,7 +12,7 @@ The data is retrieved from The Danish Legal Information Portal (retsinformation.
 
 ## Getting Started
 
-To replicate this study, you are more invited to make fork.
+To replicate this study, you are more invited to make fork. See the ```environment.yml``` to install relevant dependencies.
 
 ### Prerequisites
 
@@ -108,7 +108,7 @@ Output (all scripts): Inferred outputs for the models T5 and GPT with variyng co
 
 Generate the answers based on NeoGPT and T5. To run the code locally, this will require approx 7-8 hours depending in your computer. To run all models with all configurations as in this project, you can run below shell script, by changing the path. Beware that the code was run on Mac M2 and M3 with 16MB ram.
 
-Change wd to the folder with below shell file, and use these two commandline code in terminal to run the shell file: 
+Change wd to the folder with below shell file (src/model_inference/run_models.sh), and use these two commandline code in terminal to run the shell file:
 
 ```[terminal]
 chmod +x run_models.sh
